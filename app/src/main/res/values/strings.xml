@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DSE Tracker</string>
+    <string name="dse_live_tracker">DSE Live Tracker</string>
+    <string name="top_gaining">Top-Gaining</string>
+</resources>
