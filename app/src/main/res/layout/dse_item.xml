@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    android:backgroundTint="@color/white"
+    android:elevation="6dp"
+    app:cardCornerRadius="8dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <!-- Rank Circle -->
+        <TextView
+            android:id="@+id/tvRank"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circle_colored"
+            android:gravity="center"
+            android:text="1"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- Company Name -->
+        <TextView
+            android:id="@+id/tvCompanyName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/tvRank"
+            android:text="JANATAMF"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- Price -->
+        <TextView
+            android:id="@+id/tvSharePrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_toEndOf="@id/tvCompanyName"
+            android:text="৳ 30.4"
+            android:textColor="@color/green"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <!-- Change Label -->
+        <TextView
+            android:id="@+id/tvChangeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvCompanyName"
+            android:layout_alignStart="@id/tvCompanyName"
+            android:layout_marginTop="4dp"
+            android:text="change:"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <!-- Change Value -->
+        <TextView
+            android:id="@+id/tvChangeValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvChangeLabel"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@id/tvChangeLabel"
+            android:text="-0.1"
+            android:textColor="@color/red"
+            android:textSize="12sp" />
+
+        <!-- Change Percentage -->
+        <TextView
+            android:id="@+id/tvChangePercent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvChangeLabel"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@id/tvChangeValue"
+            android:text="-2.86%"
+            android:textColor="@color/red"
+            android:textSize="12sp" />
+
+        <!-- Star Icon -->
+        <ImageView
+            android:id="@+id/ivStar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="28dp"
+            android:src="@drawable/favorite_grey"
+            app:tint="@color/yellow" />
+
+        <!-- Bell Icon -->
+        <ImageView
+            android:id="@+id/ivBell"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/notification"
+            app:tint="@color/yellow" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -41,4 +41,10 @@ dependencies {
     // circle imageview
     implementation libs.circleimageview
 
+    // lottie animation
+    implementation libs.lottie
+
+    // volley
+    implementation libs.volley
+
 }

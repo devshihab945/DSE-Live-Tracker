@@ -38,7 +38,6 @@
                     android:src="@mipmap/ic_launcher"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="1dp"
-
                     tools:ignore="HardcodedText" />
 
                 <!-- Vertical LinearLayout with two TextViews -->
@@ -85,8 +84,7 @@
 
                     android:src="@drawable/refresh"
                     android:visibility="visible"
-                    app:tint="@color/white"
-                    />
+                    app:tint="@color/white" />
 
                 <!-- Notification Icon -->
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -130,7 +128,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/btnTopGaining"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
@@ -144,25 +142,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:padding="10dp">
 
                     <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:padding="3dp"
                         android:src="@drawable/increase" />
 
                     <TextView
                         android:id="@+id/tvRejectJobCount"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/balloda"
-                        android:gravity="center"
-                        android:textColor="@color/green"
+                        android:gravity="start"
                         android:text="@string/top_gaining"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/green"
+                        android:textSize="14sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        />
 
                 </LinearLayout>
 
@@ -171,7 +171,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/btnTopLosing"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
@@ -185,25 +185,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:padding="10dp">
 
                     <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:padding="3dp"
                         android:src="@drawable/decrease" />
 
                     <TextView
                         android:id="@+id/tvPendingJobCount"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/balloda"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="Top-Losing"
                         android:textColor="@color/red"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -212,7 +211,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/btnFavorite"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:focusable="true"
@@ -226,25 +225,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:padding="10dp">
 
                     <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:padding="3dp"
                         android:src="@drawable/favorite" />
 
                     <TextView
                         android:id="@+id/tvCompletedJobCount"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/balloda"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="Favorite"
                         android:textColor="@color/yellow"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textSize="14sp"
+                        />
 
                 </LinearLayout>
 
@@ -252,6 +251,18 @@
 
 
         </LinearLayout>
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/loadingAnimation"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_centerInParent="true"
+            android:padding="15dp"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading" />
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dseRecyclerView"
