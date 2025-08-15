@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -30,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView btnRefresh, btnSearch;
     CardView btnTopGaining, btnTopLosing, btnFavorite;
+    TextView tvMarketStatus;
 
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         loadingAnimation = findViewById(R.id.loadingAnimation);
         btnRefresh = findViewById(R.id.btnRefresh);
         btnSearch = findViewById(R.id.btnSearch);
+        tvMarketStatus = findViewById(R.id.tvMarketStatus);
 
         btnTopGaining = findViewById(R.id.btnTopGaining);
         btnTopLosing = findViewById(R.id.btnTopLosing);
@@ -97,6 +101,27 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("type", "favorite");
             startActivity(intent);
         });
+
+        // Get current time
+        Calendar calendar = Calendar.getInstance();
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = calendar.get(Calendar.MINUTE);
+
+        // Market open and close times
+        int openHour = 9;   // 9:00 AM
+        int closeHour = 15; // 3:00 PM
+
+        boolean isOpen = currentHour > openHour && currentHour < closeHour
+                || currentHour == openHour || currentHour == closeHour && currentMinute == 0;
+
+        if (isOpen) {
+            tvMarketStatus.setText("Open");
+            tvMarketStatus.setTextColor(getResources().getColor(R.color.white));
+        } else {
+            tvMarketStatus.setText("Closed");
+            tvMarketStatus.setTextColor(getResources().getColor(R.color.red));
+        }
+
 
     }
 
