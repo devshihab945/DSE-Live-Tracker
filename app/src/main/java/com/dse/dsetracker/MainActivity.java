@@ -1,12 +1,15 @@
 package com.dse.dsetracker;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -31,14 +34,17 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView dseRecyclerView;
+    RecyclerView dseRecyclerView;
     private LottieAnimationView loadingAnimation;
     private List<DSEModel> dseList;
     private DSEAdapter adapter;
 
     private static final String URL = "https://shihab.technetia.xyz/GUB/8thSem/CSE426/DSEBOT/show_dse_data.php";
 
+    ImageView btnRefresh, btnSearch;
+    CardView btnTopGaining, btnTopLosing, btnFavorite;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,12 @@ public class MainActivity extends AppCompatActivity {
 
         dseRecyclerView = findViewById(R.id.dseRecyclerView);
         loadingAnimation = findViewById(R.id.loadingAnimation);
+        btnRefresh = findViewById(R.id.btnRefresh);
+        btnSearch = findViewById(R.id.btnSearch);
+
+        btnTopGaining = findViewById(R.id.btnTopGaining);
+        btnTopLosing = findViewById(R.id.btnTopLosing);
+        btnFavorite = findViewById(R.id.btnFavorite);
 
         dseList = new ArrayList<>();
         adapter = new DSEAdapter(this, dseList);
@@ -62,6 +74,29 @@ public class MainActivity extends AppCompatActivity {
 
         fetchDSEData();
 
+        btnRefresh.setOnClickListener(v -> fetchDSEData());
+
+        btnRefresh.setOnClickListener(v -> fetchDSEData());
+
+        btnSearch.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
+
+        btnTopGaining.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DSEActivity.class);
+            intent.putExtra("type", "top_gaining");
+            startActivity(intent);
+        });
+
+        btnTopLosing.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DSEActivity.class);
+            intent.putExtra("type", "top_losing");
+            startActivity(intent);
+        });
+
+        btnFavorite.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, DSEActivity.class);
+            intent.putExtra("type", "favorite");
+            startActivity(intent);
+        });
 
     }
 
@@ -98,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                                 dseList.add(new DSEModel(companyName, sharePrice, change, changeRate));
                             }
                             adapter.notifyDataSetChanged();
-                            Toast.makeText(MainActivity.this, "Total: " + total, Toast.LENGTH_SHORT).show();
+
                         } else {
                             Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                         }

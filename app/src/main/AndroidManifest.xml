@@ -16,6 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DSETracker">
         <activity
+            android:name=".SearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DSEActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

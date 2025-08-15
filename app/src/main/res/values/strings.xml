@@ -2,4 +2,7 @@
     <string name="app_name">DSE Tracker</string>
     <string name="dse_live_tracker">DSE Live Tracker</string>
     <string name="top_gaining">Top-Gaining</string>
+    <string name="tittle">Tittle</string>
+    <string name="search_dse_data">Search DSE Data</string>
+    <string name="enter_dse_code">Enter DSE Code…</string>
 </resources>
