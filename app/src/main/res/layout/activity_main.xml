@@ -81,7 +81,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="-5dp"
                             android:fontFamily="@font/balloda"
-                            android:text="Open"
+                            android:text="Closed"
                             android:textColor="@color/white"
                             android:textStyle="bold"
                             android:textSize="14sp" />

@@ -47,4 +47,10 @@ dependencies {
     // volley
     implementation libs.volley
 
+    // WorkManager
+    implementation libs.work.runtime.ktx
+
+    // Notifications
+    implementation libs.core
+
 }

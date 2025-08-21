@@ -1,7 +1,10 @@
 package com.dse.dsetracker;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -25,6 +29,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dse.dsetracker.Model.DSEAdapter;
 import com.dse.dsetracker.Model.DSEModel;
+import com.dse.dsetracker.Service.PriceAlertService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,16 +49,19 @@ public class MainActivity extends AppCompatActivity {
     private static final String URL = "https://shihab.technetia.xyz/GUB/8thSem/CSE426/DSEBOT/show_dse_data.php";
 
     ImageView btnRefresh, btnSearch;
-    CardView btnTopGaining, btnTopLosing, btnFavorite;
     TextView tvMarketStatus;
+    CardView btnTopGaining, btnTopLosing, btnFavorite;
 
     @SuppressLint({"MissingInflatedId", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Edge-to-edge
         EdgeToEdge.enable(this);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightStatusBars(false); // white icons
+                .setAppearanceLightStatusBars(false);
+
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -61,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // --- Views ---
         dseRecyclerView = findViewById(R.id.dseRecyclerView);
         loadingAnimation = findViewById(R.id.loadingAnimation);
         btnRefresh = findViewById(R.id.btnRefresh);
@@ -71,58 +80,65 @@ public class MainActivity extends AppCompatActivity {
         btnTopLosing = findViewById(R.id.btnTopLosing);
         btnFavorite = findViewById(R.id.btnFavorite);
 
+        // --- RecyclerView ---
         dseList = new ArrayList<>();
         adapter = new DSEAdapter(this, dseList);
         dseRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         dseRecyclerView.setAdapter(adapter);
 
+        // --- Notification permission ---
+        requestNotificationPermission();
+
+
+        // --- Fetch DSE Data ---
         fetchDSEData();
 
+        // --- Click listeners ---
         btnRefresh.setOnClickListener(v -> fetchDSEData());
+        btnSearch.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
 
-        btnRefresh.setOnClickListener(v -> fetchDSEData());
+        btnTopGaining.setOnClickListener(v -> openDSEActivity("top_gaining"));
+        btnTopLosing.setOnClickListener(v -> openDSEActivity("top_losing"));
+        btnFavorite.setOnClickListener(v -> openDSEActivity("favorite"));
 
-        btnSearch.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
+        // --- Market Status ---
+        updateMarketStatus(tvMarketStatus);
+    }
 
-        btnTopGaining.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DSEActivity.class);
-            intent.putExtra("type", "top_gaining");
-            startActivity(intent);
-        });
+    @SuppressLint("SetTextI18n")
+    private void updateMarketStatus(TextView tvMarketStatus) {
+        Calendar calendar = Calendar.getInstance(); // local time
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
 
-        btnTopLosing.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DSEActivity.class);
-            intent.putExtra("type", "top_losing");
-            startActivity(intent);
-        });
+        boolean isTradingDay = (dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY);
 
-        btnFavorite.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DSEActivity.class);
-            intent.putExtra("type", "favorite");
-            startActivity(intent);
-        });
-
-        // Get current time
-        Calendar calendar = Calendar.getInstance();
-        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
-        int currentMinute = calendar.get(Calendar.MINUTE);
-
-        // Market open and close times
-        int openHour = 9;   // 9:00 AM
-        int closeHour = 15; // 3:00 PM
-
-        boolean isOpen = currentHour > openHour && currentHour < closeHour
-                || currentHour == openHour || currentHour == closeHour && currentMinute == 0;
-
-        if (isOpen) {
-            tvMarketStatus.setText("Open");
-            tvMarketStatus.setTextColor(getResources().getColor(R.color.white));
-        } else {
-            tvMarketStatus.setText("Closed");
-            tvMarketStatus.setTextColor(getResources().getColor(R.color.red));
+        // DSE Trading Hours: 10:00 - 14:30
+        boolean isMarketOpen = false;
+        if (isTradingDay) {
+            if (hour > 10 && hour < 14 || hour == 10 || hour == 14 && minute <= 30) {
+                isMarketOpen = true;
+            }
         }
 
+        if (!isTradingDay) {
+            tvMarketStatus.setText("Closed (Weekend)");
+            tvMarketStatus.setTextColor(ContextCompat.getColor(this, R.color.red));
+        } else if (isMarketOpen) {
+            tvMarketStatus.setText("Open");
+            tvMarketStatus.setTextColor(ContextCompat.getColor(this, R.color.green));
+        } else {
+            tvMarketStatus.setText("Closed");
+            tvMarketStatus.setTextColor(ContextCompat.getColor(this, R.color.red));
+        }
+    }
 
+
+    private void openDSEActivity(String type) {
+        Intent intent = new Intent(MainActivity.this, DSEActivity.class);
+        intent.putExtra("type", type);
+        startActivity(intent);
     }
 
     private void fetchDSEData() {
@@ -143,38 +159,35 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         String status = response.getString("status");
                         String message = response.getString("message");
-                        int total = response.getInt("total");
 
                         if ("success".equalsIgnoreCase(status)) {
                             JSONArray dataArray = response.getJSONArray("data");
                             dseList.clear();
                             for (int i = 0; i < dataArray.length(); i++) {
                                 JSONObject obj = dataArray.getJSONObject(i);
-                                String companyName = obj.getString("companyName");
-                                double sharePrice = obj.getDouble("sharePrice");
-                                double change = obj.getDouble("change");
-                                String changeRate = obj.getString("changeRate");
-
-                                dseList.add(new DSEModel(companyName, sharePrice, change, changeRate));
+                                dseList.add(new DSEModel(
+                                        obj.getString("companyName"),
+                                        obj.getDouble("sharePrice"),
+                                        obj.getDouble("change"),
+                                        obj.getString("changeRate")
+                                ));
                             }
                             adapter.notifyDataSetChanged();
-
                         } else {
-                            Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Toast.makeText(MainActivity.this, "JSON Parse Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "JSON Parse Error", Toast.LENGTH_SHORT).show();
                     }
                     loadingAnimation.setVisibility(View.GONE);
                 },
                 error -> {
                     loadingAnimation.setVisibility(View.GONE);
-                    Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                 }
         );
 
-        // Retry policy
         request.setRetryPolicy(new DefaultRetryPolicy(
                 0,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -182,6 +195,26 @@ public class MainActivity extends AppCompatActivity {
         ));
 
         Volley.newRequestQueue(this).add(request);
+    }
+
+    // ---------------- Notification Permission ----------------
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent serviceIntent = new Intent(this, PriceAlertService.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
     }
 
 

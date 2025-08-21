@@ -6,4 +6,5 @@
     <color name="yellow">#FFC107</color>
     <color name="green">#009688</color>
     <color name="colorPrimary">#03A9F4</color>
+    <color name="grey">#BDBDBD</color>
 </resources>
